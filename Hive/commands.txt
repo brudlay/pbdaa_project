@@ -1,0 +1,12 @@
+beeline
+!connect jdbc:hive2://hm-1.hpc.nyu.edu:10000/
+<netid>
+<password>
+use <netID>;
+CREATE EXTERNAL TABLE ems_table (borough STRING, severity DOUBLE, incidentResponse DOUBLE, count DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/<netID>/ems';
+CREATE EXTERNAL TABLE fire_table (borough STRING, fire_response  DOUBLE, engine DOUBLE, fire_count DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/<netID>/fire';
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/<path_to_fire_csv>' overwrite into table fire_table;
+load data inpath 'hdfs://horton.hpc.nyu.edu:8020/<path_to_ems_csv>' overwrite into table ems_table;
+select * from ems_table;
+select * from fire_table;
+select ems_table.*, fire_table.* from ems_table inner join fire_table on ems_table.borough = fire_table.borough;
